@@ -1,0 +1,26 @@
+Reference Implementation of HPL-AI Benchmark
+
+To compile and run:
+
+```
+$ make
+$ ./driver <n> <max_iter>
+```
+Where n is the size of linear system to solve.
+max_iter is the maximum number of iterations for GMRES iterative solver.
+
+Example output:
+
+```
+Residual norm at the beginning of GMRES: 1.176789e-08
+Estimated residual norm at the 1-th iteration of GMRES: 7.555386e-15
+Estimated residual norm at the 2-th iteration of GMRES: 1.497604e-21
+Final backward error |b-A*x| / (|A||x|n) : 5.880868e-17
+```
+
+
+TODO:
+Add timer.
+Clean up and comment.
+Add documentation.
+Change BLAS interface to pass by pointr.
