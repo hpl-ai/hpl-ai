@@ -54,9 +54,9 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
     memset(H, 0, m*(m+1)*sizeof(double));
     memset(V, 0, n*(m+1)*sizeof(double));
     
-    double bnrm = dlange('F', n, 1, b, n);
-    if( bnrm == 0.0 ) {
-        bnrm = 1.0;
+    double norm_b = dlange('F', n, 1, b, n);
+    if( norm_b == 0.0 ) {
+        norm_b = 1.0;
     }
 
     memcpy(r, b, n*sizeof(double));
@@ -66,7 +66,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
     dtrsm('L', 'L', 'N', 'U', n, 1, 1.0, LU, ldlu, r, n);
     dtrsm('L', 'U', 'N', 'N', n, 1, 1.0, LU, ldlu, r, n);
 
-    double error = dlange('F', n, 1, r, n) / bnrm ;
+    double error = dlange('F', n, 1, r, n) / norm_b ;
     printf("Residual norm at the beginning of GMRES: %e\n", error);
 
     if( error < tol ) {
@@ -127,7 +127,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
             H(i,i) = cs[i] * H(i,i) + sn[i] * H(i+1, i);
             H(i+1, i) = 0.0;
 
-            error = fabs(s[i+1]);
+            error = fabs(s[i+1]) / norm_b;
             printf("Estimated residual norm at the %lu-th iteration of GMRES: %e\n", i+1, error);
             if( error <= tol ) {
                 memcpy(w, s, (i+1)*sizeof(double));
@@ -152,7 +152,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
         dtrsm('L', 'L', 'N', 'U', n, 1, 1.0, LU, ldlu, r, n);
         dtrsm('L', 'U', 'N', 'N', n, 1, 1.0, LU, ldlu, r, n);
         norm_r = dlange('F', n, 1, r, n);
-        error = norm_r / bnrm;
+        error = norm_r / norm_b;
         if( error <= tol ) {
             break;
         }

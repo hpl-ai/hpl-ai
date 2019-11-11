@@ -1,6 +1,7 @@
 #include"hpl-ai.h"
 #include<stdio.h>
 #include<stdlib.h>
+#include<float.h>
 
 void sgemm( char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
                     float alpha, float* A, uint64_t lda, float* B, uint64_t ldb,
@@ -47,13 +48,21 @@ int main(int argc, char* argv[]) {
     convert_float_to_double(sA, lda, LU, lda, n, n);
     convert_float_to_double(sb, n, x, n, n, 1);
 
+    // Using GMRES without restart.
     gmres(n, A, lda, x, b, LU, lda, max_it, 1, 1e-15);
     
-    double normA = dlange('F', n, n, A, lda);
-    double normx = dlange('F', n, 1, x, n);
-    dgemv('N', n, n, -1.0, A, lda, x, 1, 1.0, b, 1);
-    double error = dlange('F', n, 1, b, n) / normA / normx / n;
-    printf("Final backward error |b-A*x| / (|A||x|n) : %e\n",error);
+    double norm_A = dlange('F', n, n, A, lda);
+    double norm_x = dlange('F', n, 1, x, n);
+    double norm_b = dlange('F', n, 1, b, n);
+    dgemv('N', n, n, 1.0, A, lda, x, 1, -1.0, b, 1);
+    double error = dlange('F', n, 1, b, n) / (norm_A * norm_x + norm_b) / n;
+    printf("Final backward error |A*x-b| / (|A||x|+|b|) / n : %e\n", error);
+    printf("Machine epsilon in double precision: %e\n", DBL_EPSILON);
+    if( error < DBL_EPSILON ) {
+        printf("Backward error PASSED the machine epsilon threshold.\n");
+    } else {
+        printf("Backward error DID NOT PASS the macghine epsilon threshold.\n");
+    }
 
     return 0;
 }
