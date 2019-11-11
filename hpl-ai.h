@@ -3,6 +3,7 @@
 
 void matgen(double *A, uint64_t lda, uint64_t n);
 void vecgen(double *v, uint64_t n);
+double get_wtime( void );
 void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n);
 void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n);
 void convert_double_to_float(double *src, uint64_t ldsrc, float *dst,

@@ -25,6 +25,8 @@ int main(int argc, char* argv[]) {
         max_it = n-1;
     }
 
+    double time_convert, time_factor, time_solve, time_gmres, time_total;
+
     uint64_t lda = (n + 16 - 1) / 16 * 16; // round up to multiple of 16
 
     double* A = (double*)malloc(lda*n*sizeof(double));
@@ -37,20 +39,48 @@ int main(int argc, char* argv[]) {
     matgen(A, lda, n);
     vecgen(b, n);
 
+    // Convert A and b to single.
+    time_convert = get_wtime();
+    time_total = time_convert;
     convert_double_to_float(A, lda, sA, lda, n, n);
     convert_double_to_float(b, n, sb, n, n, 1);
+    time_convert = get_wtime() - time_convert;
+    printf("Time spent in conversion to single: %e second.\n", time_convert);
 
+    // LU factorization without pivoting.
+    time_factor = get_wtime();
+    time_total = time_factor;
     sgetrf2_nopiv(n, n, sA, lda);
+    time_factor = get_wtime() - time_factor;
+    printf("Time spent in factorization       : %e second.\n", time_factor);
     
+    // Forward and backward substitution.
+    time_solve = get_wtime();
     strsm('L', 'L', 'N', 'U', n, 1, 1.0, sA, lda, sb, n);
     strsm('L', 'U', 'N', 'N', n, 1, 1.0, sA, lda, sb, n);
+    time_solve = get_wtime() - time_solve;
+    printf("Time spent in solve               : %e second.\n", time_solve);
 
+    // Convert result back to double.
+    time_convert = get_wtime();
     convert_float_to_double(sA, lda, LU, lda, n, n);
     convert_float_to_double(sb, n, x, n, n, 1);
+    time_convert = get_wtime() - time_convert;
+    printf("Time spent in conversion to double: %e second.\n", time_convert);
 
     // Using GMRES without restart.
+    time_gmres = get_wtime();
     gmres(n, A, lda, x, b, LU, lda, max_it, 1, 1e-15);
+    time_gmres = get_wtime() - time_gmres;
+    time_total = get_wtime() - time_total;
+    printf("Time spent in GMRES               : %e second.\n", time_gmres);
+    printf("Total time                        : %e second.\n", time_total);
+
+    double ops = 2.0/3.0 * n * n * n + 3.0/2.0 * n * n;
+    printf("Effective operation per sec       : %12f GFLOPs\n", 1e-9 * ops / time_total );
+
     
+    // Chck final backward error.
     double norm_A = dlange('F', n, n, A, lda);
     double norm_x = dlange('F', n, 1, x, n);
     double norm_b = dlange('F', n, 1, b, n);
