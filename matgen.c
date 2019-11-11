@@ -15,26 +15,20 @@ uint32_t mcg_rand() {
 // Generate double floating-point number from uniform(-0.5, 0.5)
 double mcg_rand_double() { return ((double)mcg_rand()) / UINT32_MAX - 0.5; }
 
-// Generate a row diagonal dominate square matrix A.
-// Column diagonal dominate matrix would also work.
+// Generate a column diagonal dominate square matrix A.
 void matgen(double *A, uint64_t lda, uint64_t n) {
 
-  double *diag = (double *)malloc(n * sizeof(double));
-  memset(diag, 0, n * sizeof(double));
+  double diag = 0.0;
 
   for (uint64_t j = 0; j < n; j++) {
     for (uint64_t i = 0; i < n; i++) {
       A[j * lda + i] = mcg_rand_double();
-      diag[i] += fabs(A[j * lda + i]);
+      diag += fabs(A[j * lda + i]);
     }
+    A[j*lda+j] = diag - fabs(A[j*lda+j]);
+    diag = 0.0;
   }
 
-  // TODO: Use reduction to compute row sum to avoid underflow.
-  for (uint64_t i = 0; i < n; i++) {
-    A[i * lda + i] = diag[i] - fabs(A[i * lda + i]);
-  }
-
-  free(diag);
 }
 
 void vecgen(double *v, uint64_t n) {
