@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
     // Using GMRES without restart.
     time_gmres = get_wtime();
-    gmres(n, A, lda, x, b, LU, lda, max_it, 1, 1e-15);
+    gmres(n, A, lda, x, b, LU, lda, max_it, 1, DBL_EPSILON);
     time_gmres = get_wtime() - time_gmres;
     time_total = get_wtime() - time_total;
     printf("Time spent in GMRES               : %e second.\n", time_gmres);
