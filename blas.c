@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <math.h>
 #define A(i, j) *(A + (i) + (j) * lda)
 #define B(i, j) *(B + (i) + (j) * ldb)
@@ -147,6 +149,23 @@ double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda) {
             }
         }
         return sqrt(sum);
+    // Infinity norm
+    } else if ( norm == 'I' ) {
+        double* work = (double*) malloc(m*sizeof(double));
+        memset( work, 0, m*sizeof(double) );
+        double max = 0.0;
+        for (uint64_t j = 0; j < n; ++j) {
+            for (uint64_t i = 0; i < m; ++i) {
+                work[i] += fabs(A(i,j));
+            }
+        }
+        for (uint64_t i = 0; i < m; ++i) {
+            if( max < work[i] ) {
+                max = work[i];
+            }
+        }
+        free(work);
+        return max;
     }
     return 0;
 }
