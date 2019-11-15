@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     printf("Effective operation per sec       : %12f GFLOPs\n", 1e-9 * ops / time_total );
 
     
-    // Chck final backward error.
+    // Check final backward error.
     double norm_A = dlange('I', n, n, A, lda);
     double norm_x = dlange('I', n, 1, x, n);
     double norm_b = dlange('I', n, 1, b, n);
