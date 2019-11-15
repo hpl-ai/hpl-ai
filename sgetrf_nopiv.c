@@ -4,6 +4,41 @@
 
 #define A(i, j) *(A + (i) + (j) * lda)
 
+void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+
+    uint64_t j;
+    uint64_t nb = 32;
+    uint64_t jb = nb;
+
+    // Use unblock code.
+    if( nb > m || nb > n ) {
+        sgetrf2_nopiv(m, n, A, lda);
+        return;
+    }
+    
+    uint64_t min_mn = m<n ? m : n;
+
+    for(j=0; j<min_mn; j+=nb) {
+        if( min_mn - j < nb ) {
+            jb = min_mn - j;
+        }
+
+        // Factor panel
+        sgetrf2_nopiv(m-j, jb, &A(j, j), lda);
+
+        if( j+jb < n ) {
+            strsm('L', 'L', 'N', 'U', jb, n-j-jb, 1.0, &A(j, j), lda, &A(j, j+jb), lda);
+
+            if( j+jb < m ) {
+                sgemm('N', 'N', m-j-jb, n-j-jb, jb, -1.0, &A(j+jb, j), lda, &A(j, j+jb), lda, 1.0,
+                      &A(j+jb, j+jb), lda);
+            }
+        }
+
+    }
+
+}
+
 void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
 
     uint64_t i;

@@ -10,6 +10,7 @@ void convert_double_to_float(double *src, uint64_t ldsrc, float *dst,
                              uint64_t lddst, uint64_t m, uint64_t n);
 void convert_float_to_double(float *src, uint64_t ldsrc, double *dst,
                              uint64_t lddst, uint64_t m, uint64_t n);
+void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda);
 void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda);
 void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it, double tol );
 

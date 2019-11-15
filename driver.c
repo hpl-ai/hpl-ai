@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     // LU factorization without pivoting.
     time_factor = get_wtime();
     time_total = time_factor;
-    sgetrf2_nopiv(n, n, sA, lda);
+    sgetrf_nopiv(n, n, sA, lda);
     time_factor = get_wtime() - time_factor;
     printf("Time spent in factorization       : %e second.\n", time_factor);
     
