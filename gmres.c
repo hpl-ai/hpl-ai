@@ -3,6 +3,7 @@
 #include<stdint.h>
 #include<math.h>
 #include<string.h>
+#include<float.h>
 #include"hpl-ai.h"
 
 #define A(i, j) *(A + (i) + (j) * lda)
@@ -25,6 +26,7 @@ void rotmat( double a, double b, double* c, double* s ) {
     }
 }
 
+// Flexible generalized minimal residual method (FGMRES)
 // Based on http://www.netlib.org/templates/matlab/gmres.m
 void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it, double tol ) {
     uint64_t i, j, k, iter;
@@ -41,6 +43,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
     double* s = (double*)malloc((n+1)*sizeof(double));
     double* sn = (double*)malloc(m*sizeof(double));
     double* w = (double*)malloc(n*sizeof(double));
+    double* old_x = (double*)malloc(m*sizeof(double));
 
     double* H = (double*)malloc(m*(m+1)*sizeof(double));
     double* V = (double*)malloc(n*(m+1)*sizeof(double));
@@ -54,6 +57,8 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
 
     memset(H, 0, m*(m+1)*sizeof(double));
     memset(V, 0, n*(m+1)*sizeof(double));
+
+    memcpy(old_x, x, m*sizeof(double));
     
     double norm_b = dlange('F', n, 1, b, n);
     if( norm_b == 0.0 ) {
@@ -139,6 +144,23 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
                 memcpy(w, s, (i+1)*sizeof(double));
                 dtrsm('L', 'U', 'N', 'N', i+1, 1, 1.0, H, m+1, w, n);
                 dgemv('N', n, i, 1.0, V, n, w, 1, 1.0, x, 1);
+
+
+                // Check the HPL-AI scaled residual
+                double norm_A = dlange('I', n, n, A, lda);
+                double norm_x = dlange('I', n, 1, x, n);
+                double norm_b = dlange('I', n, 1, b, n);
+                memcpy(r, b, n*sizeof(double));
+                dgemv('N', n, n, 1.0, A, lda, x, 1, -1.0, r, 1);
+                double threshold = 16.0;
+                double eps = DBL_EPSILON/2;
+                double error = dlange('I', n, 1, r, n) / (norm_A * norm_x + norm_b) / n / eps;
+                // Continue GMRES if it didn't pass the threshold
+                if( error > threshold ) {
+                    memcpy(x, old_x, m*sizeof(double));
+                    continue;
+                }
+
                 break;
             }
         }
