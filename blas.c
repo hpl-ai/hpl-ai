@@ -10,6 +10,8 @@
 void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
            float alpha, float *A, uint64_t lda, float *B, uint64_t ldb,
            float beta, float *C, uint64_t ldc) {
+    uint64_t i, j, l;
+
   // Only supprt transa=='N', trabsb=='N'
   if (transa != 'N' || transb != 'N') {
     printf("Not supported in SGEMM.\n");
@@ -26,33 +28,33 @@ void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
 
   if (alpha == 0.0) {
     if (beta == 0.0) {
-      for (uint64_t j = 0; j < n; j++) {
-        for (uint64_t i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+        for (i = 0; i < m; i++) {
           C(i, j) = 0.0;
         }
       }
     } else {
-      for (uint64_t j = 0; j < n; j++) {
-        for (uint64_t i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+        for (i = 0; i < m; i++) {
           C(i, j) = beta * C(i, j);
         }
       }
     }
   }
 
-  for (uint64_t j = 0; j < n; j++) {
+  for (j = 0; j < n; j++) {
     if (beta == 0.0) {
-      for (uint64_t i = 0; i < m; i++) {
+      for (i = 0; i < m; i++) {
         C(i, j) = 0.0;
       }
     } else {
-      for (uint64_t i = 0; i < m; i++) {
+      for (i = 0; i < m; i++) {
         C(i, j) = beta * C(i, j);
       }
     }
-    for (uint64_t l = 0; l < k; l++) {
+    for (l = 0; l < k; l++) {
       float temp = alpha * B(l, j);
-      for (uint64_t i = 0; i < m; i++) {
+      for (i = 0; i < m; i++) {
         C(i, j) += temp * A(i, l);
       }
     }
@@ -61,6 +63,9 @@ void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
 }
 void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
            float alpha, float *A, uint64_t lda, float *B, uint64_t ldb) {
+
+    uint64_t i, j, k;
+
   // Only support side=='L', transa=='N', alpha==1.0.
   if (side != 'L' || transa != 'N' || alpha != 1.0) {
     printf("Not supported in STRSM.\n");
@@ -74,23 +79,23 @@ void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
   int nounit = diag == 'N';
 
   if (uplo == 'U') {
-    for (uint64_t j = 0; j < n; j++) {
-      for (uint64_t k = m - 1; k < m; k--) { // stop when k=0-1=UINT64_MAX
+    for (j = 0; j < n; j++) {
+      for (k = m - 1; k < m; k--) { // stop when k=0-1=UINT64_MAX
         if (nounit) {
           B(k, j) = B(k, j) / A(k, k);
         }
-        for (uint64_t i = 0; i < k; i++) {
+        for (i = 0; i < k; i++) {
           B(i, j) = B(i, j) - B(k, j) * A(i, k);
         }
       }
     }
   } else {
-    for (uint64_t j = 0; j < n; j++) {
-      for (uint64_t k = 0; k < m; k++) {
+    for (j = 0; j < n; j++) {
+      for (k = 0; k < m; k++) {
         if (nounit) {
           B(k, j) = B(k, j) / A(k, k);
         }
-        for (uint64_t i = k + 1; i < m; i++) {
+        for (i = k + 1; i < m; i++) {
           B(i, j) = B(i, j) - B(k, j) * A(i, k);
         }
       }
@@ -100,6 +105,8 @@ void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
 }
 void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
            double alpha, double *A, uint64_t lda, double *B, uint64_t ldb) {
+  uint64_t i, j, k;
+
   // Only support side=='L', transa=='N', alpha==1.0.
   if (side != 'L' || transa != 'N' || alpha != 1.0) {
     printf("Not supported in DTRSM.\n");
@@ -113,23 +120,23 @@ void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
   int nounit = diag == 'N';
 
   if (uplo == 'U') {
-    for (uint64_t j = 0; j < n; j++) {
-      for (uint64_t k = m - 1; k < m; k--) { // stop when k=0-1=UINT64_MAX
+    for (j = 0; j < n; j++) {
+      for (k = m - 1; k < m; k--) { // stop when k=0-1=UINT64_MAX
         if (nounit) {
           B(k, j) = B(k, j) / A(k, k);
         }
-        for (uint64_t i = 0; i < k; i++) {
+        for (i = 0; i < k; i++) {
           B(i, j) = B(i, j) - B(k, j) * A(i, k);
         }
       }
     }
   } else {
-    for (uint64_t j = 0; j < n; j++) {
-      for (uint64_t k = 0; k < m; k++) {
+    for (j = 0; j < n; j++) {
+      for (k = 0; k < m; k++) {
         if (nounit) {
           B(k, j) = B(k, j) / A(k, k);
         }
-        for (uint64_t i = k + 1; i < m; i++) {
+        for (i = k + 1; i < m; i++) {
           B(i, j) = B(i, j) - B(k, j) * A(i, k);
         }
       }
@@ -140,11 +147,13 @@ void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
 
 
 double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda) {
+    uint64_t i, j;
+
     // Frobenius norm
     if( norm == 'F' ) {
         double sum = 0.0;
-        for (uint64_t j = 0; j < n; ++j) {
-            for (uint64_t i = 0; i < m; ++i) {
+        for (j = 0; j < n; ++j) {
+            for (i = 0; i < m; ++i) {
                 sum += A(i,j) * A(i,j);
             }
         }
@@ -154,12 +163,12 @@ double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda) {
         double* work = (double*) malloc(m*sizeof(double));
         memset( work, 0, m*sizeof(double) );
         double max = 0.0;
-        for (uint64_t j = 0; j < n; ++j) {
-            for (uint64_t i = 0; i < m; ++i) {
+        for (j = 0; j < n; ++j) {
+            for (i = 0; i < m; ++i) {
                 work[i] += fabs(A(i,j));
             }
         }
-        for (uint64_t i = 0; i < m; ++i) {
+        for (i = 0; i < m; ++i) {
             if( max < work[i] ) {
                 max = work[i];
             }
@@ -171,17 +180,18 @@ double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda) {
 }
 
 void dgemv(char trans, uint64_t m, uint64_t n, double alpha, double* A, uint64_t lda, double* X, uint64_t incx, double beta, double* Y, uint64_t incy) {
+    uint64_t i, j;
     if( trans != 'N' || incx != 1 || incy != 1 ) {
         return;
     }
 
     if( beta != 1.0 ) {
         if( beta == 0.0 ) {
-            for (uint64_t i = 0; i < m; ++i) {
+            for (i = 0; i < m; ++i) {
                 Y[i]=0;
             }
         } else {
-            for (uint64_t i = 0; i < m; ++i) {
+            for (i = 0; i < m; ++i) {
                 Y[i]=beta*Y[i];
             }
         }
@@ -191,9 +201,9 @@ void dgemv(char trans, uint64_t m, uint64_t n, double alpha, double* A, uint64_t
         return;
     }
 
-    for (uint64_t j = 0; j < n; ++j) {
+    for (j = 0; j < n; ++j) {
         double temp = alpha * X[j];
-        for (uint64_t i = 0; i < m; ++i) {
+        for (i = 0; i < m; ++i) {
             Y[i] += temp * A(i,j);
         }
     }

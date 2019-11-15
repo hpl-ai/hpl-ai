@@ -5,12 +5,15 @@
 #define A(i, j) *(A + (i) + (j) * lda)
 
 void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+
+    uint64_t i;
+
   if (m <= 1 || n == 0) {
     return;
   }
 
   if (n == 1) {
-    for (uint64_t i = 1; i < m; i++) {
+    for (i = 1; i < m; i++) {
       A(i, 0) /= A(0, 0);
     }
   } else { // Use recursive code

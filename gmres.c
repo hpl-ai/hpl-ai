@@ -27,6 +27,7 @@ void rotmat( double a, double b, double* c, double* s ) {
 
 // Based on http://www.netlib.org/templates/matlab/gmres.m
 void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it, double tol ) {
+    uint64_t i, j, k, iter;
 
     uint64_t m = restart;
     if( m > n ) {
@@ -73,7 +74,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
     }
 
     // Begin iteration
-    for( uint64_t iter = 0; iter < max_it; ++iter ) {
+    for(iter = 0; iter < max_it; ++iter ) {
 
         // r = U \ (L \ (b - A*x))
         if( iter != 0 ) {
@@ -85,38 +86,38 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU
         
         // V0 = r; s[0] = |r|;
         double norm_r = dlange('F', n, 1, r, n);
-        for( uint64_t i=0; i<n; i++ ){
+        for(i=0; i<n; i++ ){
             r[i] /= norm_r;
         }
         memcpy(V, r, n*sizeof(double));
         s[0] = norm_r;
 
-        for( uint64_t i=0; i<m; i++) {
+        for(i=0; i<m; i++) {
             // w = U \  (L \ (A * Vi))
             dgemv('N', n, n, 1.0, A, lda, V+i*n, 1, 0.0, w, 1);
             dtrsm('L', 'L', 'N', 'U', n, 1, 1.0, LU, ldlu, w, n);
             dtrsm('L', 'U', 'N', 'N', n, 1, 1.0, LU, ldlu, w, n);
      
             // Gram-Schmidt process
-            for( uint64_t k=0; k<=i; k++ ) {
+            for(k=0; k<=i; k++ ) {
                 // H(k,i) = w' * V(:,i)
-                for( uint64_t j=0; j<n; j++) {
+                for(j=0; j<n; j++) {
                     H(k, i) += w[j] * V(j, k);
                 }
                 // w = w - H(k,i) * V(:,i)
-                for( uint64_t j=0; j<n; j++) {
+                for(j=0; j<n; j++) {
                     w[j] -= H(k, i) * V(j, k);
                 }
             }
             H(i+1, i) = dlange('F', n, 1, w, n);
 
-            for( uint64_t j=0; j<n; j++) {
+            for(j=0; j<n; j++) {
                 w[j] /= H(i+1, i);
                 V(j, i+1) = w[j];
             }
 
             // Apply givens rotation
-            for( uint64_t k=0; k<i; k++ ) {
+            for(k=0; k<i; k++ ) {
                 temp      =  cs[k] * H(k, i) + sn[k] * H(k+1, i);
                 H(k+1, i) = -sn[k] * H(k, i) + cs[k] * H(k+1, i);
                 H(k, i)   = temp;

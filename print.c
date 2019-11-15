@@ -4,6 +4,9 @@
 #define A(i, j) *(A + (i) + (j) * lda)
 
 void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
+
+    uint64_t i, j;
+
   if (lda < m) {
     return;
   }
@@ -12,8 +15,8 @@ void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
   } else {
     printf("[\n");
   }
-  for (uint64_t i = 0; i < m; ++i) {
-    for (uint64_t j = 0; j < n; ++j) {
+  for (i = 0; i < m; ++i) {
+    for (j = 0; j < n; ++j) {
       printf(" %10.6f", A(i, j));
     }
     if (m > 1) {
@@ -27,6 +30,9 @@ void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
 }
 
 void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n) {
+
+    uint64_t i, j;
+
   if (lda < m) {
     return;
   }
@@ -35,8 +41,8 @@ void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n) {
   } else {
     printf("[\n");
   }
-  for (uint64_t i = 0; i < m; ++i) {
-    for (uint64_t j = 0; j < n; ++j) {
+  for (i = 0; i < m; ++i) {
+    for (j = 0; j < n; ++j) {
       printf(" %14.10e", A(i, j));
     }
     if (m > 1) {
