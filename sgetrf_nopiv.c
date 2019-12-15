@@ -4,6 +4,9 @@
 
 #define A(i, j) *(A + (i) + (j) * lda)
 
+#ifdef __cplusplus
+extern "C"
+#endif
 void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
 
     uint64_t j;

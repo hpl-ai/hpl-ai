@@ -1,6 +1,10 @@
 #pragma once
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void matgen(double *A, uint64_t lda, uint64_t n);
 void vecgen(double *v, uint64_t n);
 double get_wtime( void );
@@ -33,3 +37,7 @@ void dtrsm( char side, char uplo, char transa, char diag, uint64_t m,
 void dgemv(char trans, uint64_t m, uint64_t n, double alpha, double* A, uint64_t lda, double* X, uint64_t incx, double beta, double* Y, uint64_t incy);
 
 double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda);
+
+#ifdef __cplusplus
+}
+#endif
