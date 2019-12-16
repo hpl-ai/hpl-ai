@@ -49,6 +49,8 @@ int main(int argc, char* argv[]) {
     printf("as well as the scaled residual check.\n");
     printf("Please visit http://www.icl.utk.edu/research/hpl-ai for more details.\n");
     printf("\n");
+    printf("N=%d\n", n);
+    printf("\n");
 
     // Convert A and b to single.
     time_convert = get_wtime();
