@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -W -Wall -lm
+CFLAGS = -O2 -W -Wall -lm
 LDFLAGS = -lm
 OBJ = print.o matgen.o sgetrf_nopiv.o convert.o blas.o gmres.o timer.o
 NVCC = nvcc
-NVCFLAGS =
+NVCFLAGS = -O2
 LDLIBS = -lcublas -lcuda
 
 %.o: %.cu
