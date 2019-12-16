@@ -19,4 +19,4 @@ driver: $(OBJ) driver.c
 all: driver
 
 clean:
-	rm *.o driver
+	rm -rf *.o driver
