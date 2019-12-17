@@ -3,9 +3,9 @@
 
 #define A(i, j) *(A + (i) + (j) * lda)
 
-void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
+void print_matrix_float(float *A, int lda, int m, int n) {
 
-    uint64_t i, j;
+    int i, j;
 
     if (lda < m) {
         return;
@@ -29,9 +29,9 @@ void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
     return;
 }
 
-void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n) {
+void print_matrix_double(double *A, int lda, int m, int n) {
 
-    uint64_t i, j;
+    int i, j;
 
     if (lda < m) {
         return;

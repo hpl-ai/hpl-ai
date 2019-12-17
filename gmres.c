@@ -28,12 +28,12 @@ void rotmat(double a, double b, double* c, double* s) {
 
 // Flexible generalized minimal residual method (FGMRES)
 // Based on http://www.netlib.org/templates/matlab/gmres.m
-void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b,
-           double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it,
+void gmres(int n, double* A, int lda, double* x, double* b,
+           double* LU, int ldlu, int restart, int max_it,
            double tol) {
-    uint64_t i, j, k, iter;
+    int i, j, k, iter;
 
-    uint64_t m = restart;
+    int m = restart;
     if (m > n) {
         m = n;
     }
@@ -142,7 +142,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b,
 
             error = fabs(s[i + 1]) / norm_b;
             printf(
-                "Estimated residual norm at the %lu-th iteration of GMRES: "
+                "Estimated residual norm at the %d-th iteration of GMRES: "
                 "%e\n",
                 i + 1, error);
             if (error <= tol) {

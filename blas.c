@@ -7,10 +7,10 @@
 #define B(i, j) *(B + (i) + (j) * ldb)
 #define C(i, j) *(C + (i) + (j) * ldc)
 
-void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
-           float alpha, float *A, uint64_t lda, float *B, uint64_t ldb,
-           float beta, float *C, uint64_t ldc) {
-    uint64_t i, j, l;
+void sgemm(char transa, char transb, int m, int n, int k,
+           float alpha, float *A, int lda, float *B, int ldb,
+           float beta, float *C, int ldc) {
+    int i, j, l;
 
     // Only supprt transa=='N', trabsb=='N'
     if (transa != 'N' || transb != 'N') {
@@ -61,10 +61,10 @@ void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
     }
     return;
 }
-void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
-           float alpha, float *A, uint64_t lda, float *B, uint64_t ldb) {
+void strsm(char side, char uplo, char transa, char diag, int m, int n,
+           float alpha, float *A, int lda, float *B, int ldb) {
 
-    uint64_t i, j, k;
+    int i, j, k;
 
     // Only support side=='L', transa=='N', alpha==1.0.
     if (side != 'L' || transa != 'N' || alpha != 1.0) {
@@ -80,7 +80,7 @@ void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
 
     if (uplo == 'U') {
         for (j = 0; j < n; j++) {
-            for (k = m - 1; k < m; k--) {  // stop when k=0-1=UINT64_MAX
+            for (k = m - 1; k >= 0; k--) {
                 if (nounit) {
                     B(k, j) = B(k, j) / A(k, k);
                 }
@@ -103,9 +103,9 @@ void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
     }
     return;
 }
-void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
-           double alpha, double *A, uint64_t lda, double *B, uint64_t ldb) {
-    uint64_t i, j, k;
+void dtrsm(char side, char uplo, char transa, char diag, int m, int n,
+           double alpha, double *A, int lda, double *B, int ldb) {
+    int i, j, k;
 
     // Only support side=='L', transa=='N', alpha==1.0.
     if (side != 'L' || transa != 'N' || alpha != 1.0) {
@@ -121,7 +121,7 @@ void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
 
     if (uplo == 'U') {
         for (j = 0; j < n; j++) {
-            for (k = m - 1; k < m; k--) {  // stop when k=0-1=UINT64_MAX
+            for (k = m - 1; k >= 0; k--) {
                 if (nounit) {
                     B(k, j) = B(k, j) / A(k, k);
                 }
@@ -145,8 +145,8 @@ void dtrsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
     return;
 }
 
-double dlange(char norm, uint64_t m, uint64_t n, double *A, uint64_t lda) {
-    uint64_t i, j;
+double dlange(char norm, int m, int n, double *A, int lda) {
+    int i, j;
 
     // Frobenius norm
     if (norm == 'F') {
@@ -178,10 +178,10 @@ double dlange(char norm, uint64_t m, uint64_t n, double *A, uint64_t lda) {
     return 0;
 }
 
-void dgemv(char trans, uint64_t m, uint64_t n, double alpha, double *A,
-           uint64_t lda, double *X, uint64_t incx, double beta, double *Y,
-           uint64_t incy) {
-    uint64_t i, j;
+void dgemv(char trans, int m, int n, double alpha, double *A,
+           int lda, double *X, int incx, double beta, double *Y,
+           int incy) {
+    int i, j;
     if (trans != 'N' || incx != 1 || incy != 1) {
         return;
     }
