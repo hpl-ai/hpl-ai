@@ -1,6 +1,6 @@
 AC_PREREQ([2.69])
 
-AC_INIT(hpl-ai, 2.3, hpl-ai@icl.utk.edu)
+AC_INIT(hpl-ai, 0.1, hpl-ai@icl.utk.edu)
 AC_CONFIG_SRCDIR([hpl-ai.h])
 AC_CONFIG_HEADERS([hpl-ai-config.h])
 
