@@ -13,8 +13,13 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AM_PROG_CC_STDC
 AM_PROG_CC_C_O
 
-AC_CHECK_HEADERS([sys/time.h])
+AC_CHECK_HEADERS([sys/time.h math.h])
+
+AC_SEARCH_LIBS(sqrt, m, , AC_MSG_ERROR([sqrt() function not found in standard C math library]))
+
+AC_CHECK_FUNCS([fabs])
 
 AC_CONFIG_FILES([Makefile])
+
 
 AC_OUTPUT
