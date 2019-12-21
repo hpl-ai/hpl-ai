@@ -1,5 +1,6 @@
 #pragma once
-#include <stdint.h>
+
+#define HPLAI_INDEX2D(PTR, R, C, LDIM) ( ((PTR) + (R)) + sizeof(char) * (C) / sizeof(char) * (LDIM) )
 
 void matgen(double* A, int lda, int n);
 void vecgen(double* v, int n);

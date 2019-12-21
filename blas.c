@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
 #include <math.h>
-#define A(i, j) *(A + (i) + (j) * lda)
-#define B(i, j) *(B + (i) + (j) * ldb)
-#define C(i, j) *(C + (i) + (j) * ldc)
+
+#include "hpl-ai.h"
+
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
+#define B(i, j) *HPLAI_INDEX2D(B, (i), (j), ldb)
+#define C(i, j) *HPLAI_INDEX2D(C, (i), (j), ldc)
 
 void sgemm(char transa, char transb, int m, int n, int k,
            float alpha, float *A, int lda, float *B, int ldb,

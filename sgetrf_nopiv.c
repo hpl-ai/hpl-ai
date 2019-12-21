@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdint.h>
+
 #include "hpl-ai.h"
 
-#define A(i, j) *(A + (i) + (j) * lda)
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
 
 void sgetrf_nopiv(int m, int n, float *A, int lda) {
 

@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <math.h>
 #include <string.h>
 #include <float.h>
+
 #include "hpl-ai.h"
 
-#define A(i, j) *(A + (i) + (j) * lda)
-#define H(i, j) *(H + (i) + (j) * (m + 1))
-#define V(i, j) *(V + (i) + (j) * n)
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
+#define H(i, j) *HPLAI_INDEX2D(H, (i), (j), (m + 1))
+#define V(i, j) *HPLAI_INDEX2D(V, (i), (j), n)
 
 // Compute Gevens rotation matrix parameters.
 void rotmat(double a, double b, double* c, double* s) {
