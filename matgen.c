@@ -4,6 +4,8 @@
 
 #include "hpl-ai.h"
 
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
+
 static const unsigned long int pow32_1 = 4294967295UL;
 
 static unsigned long long int state = 1;  // Can be any odd number. Not thread safe.
@@ -12,7 +14,7 @@ static unsigned long long int state = 1;  // Can be any odd number. Not thread s
 unsigned long int mcg_rand() {
     const unsigned long long int MULTIPLIER = 14647171131086947261ULL;
     state *= MULTIPLIER;
-    return state & pow32_1; /* preserve lower 32 bits */
+    return state >> 32; /* use high 32 bits */
 }
 
 // Generate double floating-point number from uniform(-0.5, 0.5)
@@ -28,13 +30,13 @@ void matgen(double *A, int lda, int m) {
 
     for (j = 0; j < m; j++) {
         for (i = 0; i < m; i++) {
-            HPLAI_INDEX2D(A, i, j, lda)[0] = mcg_rand_double();
-            diag[i] += fabs(HPLAI_INDEX2D(A, i, j, lda)[0]);
+            A(i, j) = mcg_rand_double();
+            diag[i] += fabs(A(i, j));
         }
     }
 
     for (i = 0; i < m; i++) {
-        HPLAI_INDEX2D(A, i, i, lda)[0] = diag[i] - fabs(HPLAI_INDEX2D(A, i, i, lda)[0]);
+        A(i, j) = diag[i] - fabs(A(i, j));
     }
 
     free(diag);
