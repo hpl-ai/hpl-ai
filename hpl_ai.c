@@ -3,17 +3,17 @@
 #include <stdlib.h>
 #include <float.h>
 
-void sgemm(char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
-           float alpha, float* A, uint64_t lda, float* B, uint64_t ldb,
-           float beta, float* C, uint64_t ldc);
+void sgemm(char transa, char transb, int m, int n, int k,
+           float alpha, float* A, int lda, float* B, int ldb,
+           float beta, float* C, int ldc);
 
-void strsm(char side, char uplo, char transa, char diag, uint64_t m, uint64_t n,
-           float alpha, float* A, uint64_t lda, float* B, uint64_t ldb);
+void strsm(char side, char uplo, char transa, char diag, int m, int n,
+           float alpha, float* A, int lda, float* B, int ldb);
 
 int main(int argc, char* argv[]) {
 
-    uint64_t n = 100;      // matrix size
-    uint64_t max_it = 50;  // maximum number of iterations in GMRES
+    int n = 100;      // matrix size
+    int max_it = 50;  // maximum number of iterations in GMRES
     if (argc >= 2) {
         n = atoi(argv[1]);
     }
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
     double time_convert, time_factor, time_solve, time_gmres, time_total;
 
-    uint64_t lda = (n + 16 - 1) / 16 * 16;  // round up to multiple of 16
+    int lda = (n + 16 - 1) / 16 * 16;  // round up to multiple of 16
 
     double* A = (double*)malloc(lda * n * sizeof(double));
     double* LU = (double*)malloc(lda * n * sizeof(double));

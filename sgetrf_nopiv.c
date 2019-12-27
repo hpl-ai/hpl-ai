@@ -1,14 +1,14 @@
 #include <stdio.h>
-#include <stdint.h>
+
 #include "hpl-ai.h"
 
-#define A(i, j) *(A + (i) + (j) * lda)
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
 
-void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+void sgetrf_nopiv(int m, int n, float *A, int lda) {
 
-    uint64_t j;
-    uint64_t nb = 32;
-    uint64_t jb = nb;
+    int j;
+    int nb = 32;
+    int jb = nb;
 
     // Use unblock code.
     if (nb > m || nb > n) {
@@ -16,7 +16,7 @@ void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
         return;
     }
 
-    uint64_t min_mn = m < n ? m : n;
+    int min_mn = m < n ? m : n;
 
     for (j = 0; j < min_mn; j += nb) {
         if (min_mn - j < nb) {
@@ -38,9 +38,9 @@ void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
     }
 }
 
-void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+void sgetrf2_nopiv(int m, int n, float *A, int lda) {
 
-    uint64_t i;
+    int i;
 
     if (m <= 1 || n == 0) {
         return;
@@ -52,8 +52,8 @@ void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
         }
     } else {  // Use recursive code
 
-        uint64_t n1 = (m > n ? n : m) / 2;
-        uint64_t n2 = n - n1;
+        int n1 = (m > n ? n : m) / 2;
+        int n2 = n - n1;
 
         sgetrf2_nopiv(m, n1, A, lda);
 

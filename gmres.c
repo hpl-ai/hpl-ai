@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <math.h>
 #include <string.h>
 #include <float.h>
+
 #include "hpl-ai.h"
 
-#define A(i, j) *(A + (i) + (j) * lda)
-#define H(i, j) *(H + (i) + (j) * (m + 1))
-#define V(i, j) *(V + (i) + (j) * n)
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
+#define H(i, j) *HPLAI_INDEX2D(H, (i), (j), (m + 1))
+#define V(i, j) *HPLAI_INDEX2D(V, (i), (j), n)
 
 // Compute Gevens rotation matrix parameters.
 void rotmat(double a, double b, double* c, double* s) {
@@ -28,12 +28,12 @@ void rotmat(double a, double b, double* c, double* s) {
 
 // Flexible generalized minimal residual method (FGMRES)
 // Based on http://www.netlib.org/templates/matlab/gmres.m
-void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b,
-           double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it,
+void gmres(int n, double* A, int lda, double* x, double* b,
+           double* LU, int ldlu, int restart, int max_it,
            double tol) {
-    uint64_t i, j, k, iter;
+    int i, j, k, iter;
 
-    uint64_t m = restart;
+    int m = restart;
     if (m > n) {
         m = n;
     }
@@ -142,7 +142,7 @@ void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b,
 
             error = fabs(s[i + 1]) / norm_b;
             printf(
-                "Estimated residual norm at the %lu-th iteration of GMRES: "
+                "Estimated residual norm at the %d-th iteration of GMRES: "
                 "%e\n",
                 i + 1, error);
             if (error <= tol) {

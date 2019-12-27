@@ -1,55 +1,40 @@
 #include <stdio.h>
-#include <stdint.h>
 
-#define A(i, j) *(A + (i) + (j) * lda)
+#include "hpl-ai.h"
 
-void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n) {
+#define A(i, j) *HPLAI_INDEX2D(A, (i), (j), lda)
 
-    uint64_t i, j;
+void print_matrix_float(float *A, int lda, int m, int n) {
+
+    int i, j;
 
     if (lda < m) {
         return;
     }
-    if (m == 1) {
-        printf("[ ");
-    } else {
-        printf("[\n");
-    }
+    printf("[%s", m==1 ? " " : "\n");
     for (i = 0; i < m; ++i) {
         for (j = 0; j < n; ++j) {
             printf(" %10.6f", A(i, j));
         }
-        if (m > 1) {
-            printf("\n");
-        } else {
-            printf(" ");
-        }
+        printf("%s", m>1 ? "\n" : " ");
     }
     printf("];\n");
     return;
 }
 
-void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n) {
+void print_matrix_double(double *A, int lda, int m, int n) {
 
-    uint64_t i, j;
+    int i, j;
 
     if (lda < m) {
         return;
     }
-    if (m == 1) {
-        printf("[ ");
-    } else {
-        printf("[\n");
-    }
+    printf("[%s", m==1 ? "" : "\n");
     for (i = 0; i < m; ++i) {
         for (j = 0; j < n; ++j) {
             printf(" %14.10e", A(i, j));
         }
-        if (m > 1) {
-            printf("\n");
-        } else {
-            printf(" ");
-        }
+        printf("%s", m>1 ? "\n" : " ");
     }
     printf("];\n");
     return;
