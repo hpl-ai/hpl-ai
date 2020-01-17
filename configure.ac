@@ -19,6 +19,12 @@ AC_SEARCH_LIBS(sqrt, m, , AC_MSG_ERROR([sqrt() function not found in standard C 
 
 AC_CHECK_FUNCS([fabs])
 
+AC_CHECK_HEADER([cuda.h], [], AC_MSG_FAILURE([Couldn't find cuda.h]))
+AC_CHECK_HEADER([cuda_runtime.h], [], AC_MSG_FAILURE([Couldn't find cuda_runtime.h]))
+AC_CHECK_HEADER([cublas_v2.h], [], AC_MSG_FAILURE([Couldn't find cublas_v2.h]))
+AC_CHECK_LIB([cublas], [cublasAlloc], [], AC_MSG_FAILURE([Couldn't find libcublas]))
+AC_CHECK_LIB([cudart], [cudaSetDevice], [], AC_MSG_FAILURE([Couldn't find libcudart]))
+
 AC_CONFIG_FILES([Makefile])
 
 
