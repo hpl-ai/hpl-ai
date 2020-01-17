@@ -9,12 +9,12 @@
 #define A(i, j) *(A + (i) + (j) * lda)
 #define dA(i, j) *(dA + (i) + (j) * ldda)
 
-void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+void sgetrf_nopiv(int m, int n, float *A, int lda) {
 
-    uint64_t j;
-    uint64_t nb = 32;
-    uint64_t jb = nb;
-    uint64_t ldda = lda;
+    int j;
+    int nb = 32;
+    int jb = nb;
+    int ldda = lda;
 
     float one = 1.0;
     float none = -1.0;
@@ -32,7 +32,7 @@ void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
         cublasSetMathMode(handle, CUBLAS_TENSOR_OP_MATH);
         cudaMalloc((void**)&dA, n*ldda*sizeof(float));
         cublasSetMatrix(n, n, sizeof(float), A, lda, dA, ldda);
-        uint64_t min_mn = m<n ? m : n;
+        int min_mn = m<n ? m : n;
         for(j=0; j<min_mn; j+=nb) {
             if( min_mn - j < nb ) {
                 jb = min_mn - j;
@@ -71,9 +71,9 @@ void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
     return;
 }
 
-void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
+void sgetrf2_nopiv(int m, int n, float *A, int lda) {
 
-    uint64_t i;
+  int i;
 
   if (m <= 1 || n == 0) {
     return;
@@ -85,8 +85,8 @@ void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda) {
     }
   } else { // Use recursive code
 
-    uint64_t n1 = (m > n ? n : m) / 2;
-    uint64_t n2 = n - n1;
+  int n1 = (m > n ? n : m) / 2;
+  int n2 = n - n1;
 
     sgetrf2_nopiv(m, n1, A, lda);
 

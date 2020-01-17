@@ -1,4 +1,4 @@
-Reference Implementation of HPL-AI Benchmark
+Reference Implementation of the HPL-AI Benchmark
 
 To compile and run:
 
@@ -28,3 +28,5 @@ The relative machine precision (eps) is taken to be: 1.110223e-16
 Computational tests pass if scaled residuals are less than 16.0
 ||Ax-b||_oo/(eps*(||A||_oo*||x||_oo+||b||_oo)*N)= 4.531977 ...PASSED
 ```
+
+SPDX-License-Identifier: BSD 3-Clause Clear License

@@ -1,43 +1,40 @@
 #pragma once
-#include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define HPLAI_INDEX2D(PTR, R, C, LDIM) ( ((PTR) + (R)) + sizeof(char) * (C) / sizeof(char) * (LDIM) )
 
-void matgen(double *A, uint64_t lda, uint64_t n);
-void vecgen(double *v, uint64_t n);
-double get_wtime( void );
-void print_matrix_float(float *A, uint64_t lda, uint64_t m, uint64_t n);
-void print_matrix_double(double *A, uint64_t lda, uint64_t m, uint64_t n);
-void convert_double_to_float(double *src, uint64_t ldsrc, float *dst,
-                             uint64_t lddst, uint64_t m, uint64_t n);
-void convert_float_to_double(float *src, uint64_t ldsrc, double *dst,
-                             uint64_t lddst, uint64_t m, uint64_t n);
-void sgetrf_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda);
-void sgetrf2_nopiv(uint64_t m, uint64_t n, float *A, uint64_t lda);
-void gmres(uint64_t n, double* A, uint64_t lda, double* x, double* b, double* LU, uint64_t ldlu, uint64_t restart, uint64_t max_it, double tol );
+unsigned long int mcg_rand(void);
+double mcg_rand_double(void);
+void mcg_advance(unsigned int delta);
+void mcg_reset(void);
+void matgen(double* A, int lda, int n);
+void vecgen(double* v, int n);
+double get_wtime(void);
+void print_matrix_float(float* A, int lda, int m, int n);
+void print_matrix_double(double* A, int lda, int m, int n);
+void convert_double_to_float(double* src, int ldsrc, float* dst,
+                             int lddst, int m, int n);
+void convert_float_to_double(float* src, int ldsrc, double* dst,
+                             int lddst, int m, int n);
+void sgetrf_nopiv(int m, int n, float* A, int lda);
+void sgetrf2_nopiv(int m, int n, float* A, int lda);
+void gmres(int n, double* A, int lda, double* x, double* b,
+           double* LU, int ldlu, int restart, int max_it,
+           double tol);
 
+// BLAS
 
-//BLAS
+void sgemm(char transa, char transb, int m, int n, int k,
+           float alpha, float* A, int lda, float* B, int ldb,
+           float beta, float* C, int ldc);
 
-void sgemm( char transa, char transb, uint64_t m, uint64_t n, uint64_t k,
-                            float alpha, float* A, uint64_t lda, float* B, uint64_t ldb,
-                                                            float beta, float* C, uint64_t ldc);
+void strsm(char side, char uplo, char transa, char diag, int m, int n,
+           float alpha, float* A, int lda, float* B, int ldb);
 
-void strsm( char side, char uplo, char transa, char diag, uint64_t m,
-                            uint64_t n, float alpha, float* A, uint64_t lda, float* B,
-                                                            uint64_t ldb );
+void dtrsm(char side, char uplo, char transa, char diag, int m, int n,
+           double alpha, double* A, int lda, double* B, int ldb);
 
-void dtrsm( char side, char uplo, char transa, char diag, uint64_t m,
-                            uint64_t n, double alpha, double* A, uint64_t lda, double* B,
-                                                            uint64_t ldb );
+void dgemv(char trans, int m, int n, double alpha, double* A,
+           int lda, double* X, int incx, double beta, double* Y,
+           int incy);
 
-
-void dgemv(char trans, uint64_t m, uint64_t n, double alpha, double* A, uint64_t lda, double* X, uint64_t incx, double beta, double* Y, uint64_t incy);
-
-double dlange(char norm, uint64_t m, uint64_t n, double* A, uint64_t lda);
-
-#ifdef __cplusplus
-}
-#endif
+double dlange(char norm, int m, int n, double* A, int lda);
