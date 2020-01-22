@@ -56,7 +56,7 @@ void matgen(double *A, int lda, int m) {
     }
 
     for (i = 0; i < m; i++) {
-        A(i, j) = diag[i] - fabs(A(i, j));
+        A(i, i) = diag[i] - fabs(A(i, i));
     }
 
     free(diag);
