@@ -2,12 +2,11 @@
 
 #define HPLAI_INDEX2D(PTR, R, C, LDIM) ( ((PTR) + (R)) + sizeof(char) * (C) / sizeof(char) * (LDIM) )
 
-unsigned long int mcg_rand(void);
-double mcg_rand_double(void);
-void mcg_advance(unsigned int delta);
-void mcg_reset(void);
-void matgen(double* A, int lda, int n);
-void vecgen(double* v, int n);
+unsigned long int mcg_rand(unsigned long long* piseed);
+double mcg_rand_double(unsigned long long* piseed);
+void mcg_advance(unsigned int, unsigned long long* piseed);
+void matgen(double* A, int lda, int n, unsigned long long iseed);
+void vecgen(double* v, int n, unsigned long long iseed);
 double get_wtime(void);
 void print_matrix_float(float* A, int lda, int m, int n);
 void print_matrix_double(double* A, int lda, int m, int n);
