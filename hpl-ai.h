@@ -2,6 +2,9 @@
 
 #define HPLAI_INDEX2D(PTR, R, C, LDIM) ( ((PTR) + (R)) + sizeof(char) * (C) / sizeof(char) * (LDIM) )
 
+unsigned long long lcg_rand(unsigned long long* piseed);
+double lcg_rand_double(unsigned long long* piseed);
+void lcg_advance(unsigned int, unsigned long long* piseed);
 unsigned long int mcg_rand(unsigned long long* piseed);
 double mcg_rand_double(unsigned long long* piseed);
 void mcg_advance(unsigned int, unsigned long long* piseed);
