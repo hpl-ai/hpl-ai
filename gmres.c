@@ -28,10 +28,11 @@ void rotmat(double a, double b, double* c, double* s) {
 
 // Flexible generalized minimal residual method (FGMRES)
 // Based on http://www.netlib.org/templates/matlab/gmres.m
-void gmres(int n, double* A, int lda, double* x, double* b,
-           double* LU, int ldlu, int restart, int max_it,
-           double tol) {
+void gmres(int n, double* A, int lda, double* x, double* b, double* LU,
+           int ldlu, int restart, int max_it, double tol) {
+
     int i, j, k, iter;
+    int updated;  // Flag to show if x is updated or not.
 
     int m = restart;
     if (m > n) {
@@ -42,10 +43,10 @@ void gmres(int n, double* A, int lda, double* x, double* b,
     double* cs = (double*)malloc(m * sizeof(double));
     double* e1 = (double*)malloc(n * sizeof(double));
     double* r = (double*)malloc(n * sizeof(double));
-    double* s = (double*)malloc((n + 1) * sizeof(double));
+    double* s = (double*)malloc((m + 1) * sizeof(double));
     double* sn = (double*)malloc(m * sizeof(double));
     double* w = (double*)malloc(n * sizeof(double));
-    double* old_x = (double*)malloc(m * sizeof(double));
+    double* old_x = (double*)malloc(n * sizeof(double));
 
     double* H = (double*)malloc(m * (m + 1) * sizeof(double));
     double* V = (double*)malloc(n * (m + 1) * sizeof(double));
@@ -54,13 +55,13 @@ void gmres(int n, double* A, int lda, double* x, double* b,
     memset(e1, 0, n * sizeof(double));
     e1[0] = 1.0;
     memset(r, 0, n * sizeof(double));
-    memset(s, 0, (n + 1) * sizeof(double));
+    memset(s, 0, (m + 1) * sizeof(double));
     memset(sn, 0, m * sizeof(double));
 
     memset(H, 0, m * (m + 1) * sizeof(double));
     memset(V, 0, n * (m + 1) * sizeof(double));
 
-    memcpy(old_x, x, m * sizeof(double));
+    memcpy(old_x, x, n * sizeof(double));
 
     double norm_b = dlange('F', n, 1, b, n);
     if (norm_b == 0.0) {
@@ -82,6 +83,8 @@ void gmres(int n, double* A, int lda, double* x, double* b,
 
     // Begin iteration
     for (iter = 0; iter < max_it; ++iter) {
+
+        updated = 0;
 
         // r = U \ (L \ (b - A*x))
         if (iter != 0) {
@@ -148,7 +151,8 @@ void gmres(int n, double* A, int lda, double* x, double* b,
             if (error <= tol) {
                 memcpy(w, s, (i + 1) * sizeof(double));
                 dtrsm('L', 'U', 'N', 'N', i + 1, 1, 1.0, H, m + 1, w, n);
-                dgemv('N', n, i, 1.0, V, n, w, 1, 1.0, x, 1);
+                dgemv('N', n, i + 1, 1.0, V, n, w, 1, 1.0, x, 1);
+                updated = 1;
 
                 // Check the HPL-AI scaled residual
                 double norm_A = dlange('I', n, n, A, lda);
@@ -160,26 +164,25 @@ void gmres(int n, double* A, int lda, double* x, double* b,
                 double eps = DBL_EPSILON / 2;
                 double error = dlange('I', n, 1, r, n) /
                                (norm_A * norm_x + norm_b) / n / eps;
+
                 // Continue GMRES if it didn't pass the threshold
                 if (error > threshold) {
-                    memcpy(x, old_x, m * sizeof(double));
+                    memcpy(x, old_x, n * sizeof(double));
+                    updated = 0;
                     continue;
                 }
-
                 break;
             }
-        }
-
-        if (error <= tol) {
-            break;
         }
 
         // Update approximation
         // w = H \ s
         // x = V * w + x
-        memcpy(w, s, m * sizeof(double));
-        dtrsm('L', 'U', 'N', 'N', m, 1, 1.0, H, m + 1, w, n);
-        dgemv('N', n, m, 1.0, V, n, w, 1, 1.0, x, 1);
+        if (!updated) {
+            memcpy(w, s, m * sizeof(double));
+            dtrsm('L', 'U', 'N', 'N', m, 1, 1.0, H, m + 1, w, n);
+            dgemv('N', n, m, 1.0, V, n, w, 1, 1.0, x, 1);
+        }
 
         // Compute redisual
         memcpy(r, b, n * sizeof(double));

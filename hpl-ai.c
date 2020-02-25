@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     double time_convert, time_factor, time_solve, time_gmres, time_total;
 
     int lda = (n + 16 - 1) / 16 * 16;  // round up to multiple of 16
+    unsigned long long iseed = 1;      // RNG seed
 
     double* A = (double*)malloc(lda * n * sizeof(double));
     double* LU = (double*)malloc(lda * n * sizeof(double));
@@ -35,8 +36,8 @@ int main(int argc, char* argv[]) {
     float* sA = (float*)malloc(lda * n * sizeof(float));
     float* sb = (float*)malloc(n * sizeof(float));
 
-    matgen(A, lda, n);
-    vecgen(b, n);
+    matgen(A, lda, n, iseed);
+    vecgen(b, n, iseed+1);
 
     printf(
         "======================================================================"
