@@ -18,6 +18,7 @@ void convert_double_to_float(double* src, int ldsrc, float* dst,
 void convert_float_to_double(float* src, int ldsrc, double* dst,
                              int lddst, int m, int n);
 void sgetrf_nopiv(int m, int n, float* A, int lda);
+void sgetrf_nopiv_cpu(int m, int n, float* A, int lda);
 void sgetrf2_nopiv(int m, int n, float* A, int lda);
 void gmres(int n, double* A, int lda, double* x, double* b,
            double* LU, int ldlu, int restart, int max_it,
