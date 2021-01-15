@@ -4,7 +4,7 @@ To compile and run:
 
 ```
 $ make
-$ ./driver <n> <max_iter>
+$ ./hpl-ai <n> <max_iter>
 ```
 Where n is the size of linear system to solve.
 max_iter is the maximum number of iterations for GMRES iterative solver.
