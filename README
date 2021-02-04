@@ -1,6 +1,20 @@
 Reference Implementation of the HPL-AI Benchmark
 
-To compile and run:
+To boostrap the configuration files make sure you have GNU Autotools installed and type:
+
+```
+autoreconf -ivf
+```
+
+To configure the build and prepare for compilation run:
+
+```
+./configure
+```
+
+Use `--help` option to see the available settings.
+
+To compile and run the benchmark executable:
 
 ```
 $ make
